@@ -7,6 +7,8 @@ from src.utils.translate import trans_to_en
 from src.data.embeddings import get_tfidf_embd
 from modelling.modelling import model_predict
 from modelling.data_model import Data
+from patterns.observer import EmailClassifier, Logger, MetricsTracker
+
 import random
 
 seed = 0
@@ -43,13 +45,27 @@ def perform_modelling(data: Data, df: pd.DataFrame, name):
     model_predict(data, df, name)
 
 
+def classify_emails(email_classifier, df):
+    # Simulate classifying email content and notify observers
+    for email in df[Config.INTERACTION_CONTENT]:
+        email_classifier.classify(email)
+
+
 # Code will start executing from following line
 if __name__ == '__main__':
+    # Initialize EmailClassifier and attach observers
+    email_classifier = EmailClassifier()
+    email_classifier.attach(Logger())
+    email_classifier.attach(MetricsTracker())
+
     # pre-processing steps
     df = load_data()
     df = preprocess_data(df)
     df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].values.astype('U')
     df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].values.astype('U')
+
+    # Classify emails and notify observers
+    classify_emails(email_classifier, df)
 
     # data transformation
     X, group_df = get_embeddings(df)
