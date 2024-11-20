@@ -13,7 +13,7 @@ class ConfigManager:
         if cls.instance is None:
             cls.instance = super(ConfigManager, cls).__new__(cls)
         return cls.instance
-    
+
     def __init__(self):
         if not hasattr(self, 'init'):
             self.init = True
@@ -34,6 +34,7 @@ class ConfigManager:
     def get_config(self, key):
         return self.config[key]
 
+    # Reload our config file after making a change
     def reload_config(self):
         importlib.reload(config)
         self.config = self.load_config_file()
