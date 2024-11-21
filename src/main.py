@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from src.data.preprocessing import de_duplication, noise_remover, get_input_data
+from src.data.preprocessing import de_duplication, noise_remover, get_input_data, translate_input_data
 from src.config.config import Config
 from src.utils.translate import trans_to_en
 from src.data.embeddings import get_tfidf_embd
@@ -21,12 +21,13 @@ def load_data():
 
 
 def preprocess_data(df):
+    # Translate input data
+    translate_input_data(df)
     # De-duplicate input data
-    df = de_duplication(df)
+    de_duplication(df)
     # remove noise in input data
     df = noise_remover(df)
-    # translate data to english
-    df[Config.TICKET_SUMMARY] = trans_to_en(df[Config.TICKET_SUMMARY].tolist())
+
     return df
 
 
@@ -55,5 +56,7 @@ if __name__ == '__main__':
     X, group_df = get_embeddings(df)
     # data modelling
     data = get_data_object(X, df)
+
+    print(data)
     # modelling
     perform_modelling(data, df, 'name')
