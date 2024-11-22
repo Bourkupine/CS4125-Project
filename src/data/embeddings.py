@@ -9,3 +9,4 @@ def get_tfidf_embd(df: DataFrame):
     x1 = tfidfconverter.fit_transform(df[Config.INTERACTION_CONTENT]).toarray()
     x2 = tfidfconverter.fit_transform(df[Config.TICKET_SUMMARY]).toarray()
     X = concatenate((x1, x2), axis=1)
+    return X

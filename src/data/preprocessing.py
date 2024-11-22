@@ -1,11 +1,15 @@
+import pandas as pd
 from pandas import DataFrame, read_csv
 
 from src.config.config import Config
 from src.utils.translate import trans_to_en
 
 
-def de_duplication(df: DataFrame):
-    df.drop_duplicates(keep='first', inplace=True)
+def remove_empty(df) -> DataFrame:
+    return df.loc[(df[Config.TICKET_SUMMARY].notna()) & (df[Config.INTERACTION_CONTENT].notna())]
+
+def de_duplication(df: DataFrame) -> DataFrame:
+    return df.drop_duplicates(keep='first')
 
 
 def noise_remover(df: DataFrame):
@@ -62,5 +66,5 @@ def get_input_data() -> DataFrame:
 
 
 def translate_input_data(df: DataFrame):
-    for col in df.columns:
-        df[col] = trans_to_en(df[col].tolist())
+    df[Config.TICKET_SUMMARY] = pd.Series(trans_to_en(df[Config.TICKET_SUMMARY].to_list()), index=df.index)
+    # df[Config.INTERACTION_CONTENT] = pd.Series(trans_to_en(df[Config.INTERACTION_CONTENT].to_list()), index=df.index)

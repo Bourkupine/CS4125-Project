@@ -1,15 +1,17 @@
 import numpy as np
 import pandas as pd
-from src.models.base import BaseModel
+from src.models.model import BaseModel
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 from numpy import *
 import random
+
 num_folds = 0
-seed =0
+seed = 0
 # Data
 np.random.seed(seed)
 random.seed(seed)
+
 
 # This file already contain the code for implementing randomforest model
 # Carefully observe the methods below and try calling them in modelling.py
@@ -37,7 +39,5 @@ class RandomForest(BaseModel):
     def print_results(self, data):
         print(classification_report(data.y_test, self.predictions))
 
-
     def data_transform(self) -> None:
         ...
-

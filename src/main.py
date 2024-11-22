@@ -1,38 +1,29 @@
+import random
+
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
-from src.data.preprocessing import de_duplication, noise_remover, get_input_data, translate_input_data
-from src.config.config import Config
-from src.utils.translate import trans_to_en
-from src.data.embeddings import get_tfidf_embd
-from modelling.modelling import model_predict
 from modelling.data_model import Data
-import random
+from modelling.modelling import model_predict
+from models import model
+from src.config.config import Config
+from src.data.embeddings import get_tfidf_embd
+from src.data.preprocessing import de_duplication, noise_remover, get_input_data, remove_empty
 
 seed = 0
 random.seed(seed)
 np.random.seed(seed)
 
-
-def load_data():
-    # load the input data
-    df = get_input_data()
-    return df
-
-
 def preprocess_data(df):
-    # Translate input data
-    translate_input_data(df)
-    # De-duplicate input data
-    de_duplication(df)
-    # remove noise in input data
-    df = noise_remover(df)
-
+    df = remove_empty(df)
+    df = de_duplication(df)
+    noise_remover(df)
     return df
 
 
 def get_embeddings(df: pd.DataFrame):
-    X = get_tfidf_embd(df)  # get tf-idf embeddings
+    X = get_tfidf_embd(df)
     return X, df
 
 
@@ -40,23 +31,19 @@ def get_data_object(X: np.ndarray, df: pd.DataFrame):
     return Data(X, df)
 
 
-def perform_modelling(data: Data, df: pd.DataFrame, name):
-    model_predict(data, df, name)
+def perform_modelling(data: Data, df: pd.DataFrame, model: model):
+    model_predict(data, df, model)
 
-
-# Code will start executing from following line
 if __name__ == '__main__':
-    # pre-processing steps
-    df = load_data()
-    df = preprocess_data(df)
+    df = get_input_data()
+
     df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].values.astype('U')
     df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].values.astype('U')
 
-    # data transformation
-    X, group_df = get_embeddings(df)
-    # data modelling
-    data = get_data_object(X, df)
+    df = preprocess_data(df)
 
-    print(data)
-    # modelling
+    X = get_embeddings(df)
+    Y = df["Type 2"].to_numpy()
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
+    data = get_data_object(X, df)
     perform_modelling(data, df, 'name')
