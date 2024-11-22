@@ -1,5 +1,6 @@
 import random
 import argparse
+import sys
 
 import numpy as np
 import pandas as pd
@@ -39,6 +40,10 @@ if __name__ == '__main__':
 
     if args.list:
         print(f"Current Models: {models}")
+        exit()
+
+    if args.model not in models:
+        sys.exit("Invalid model, use --list for a list of available models")
 
     df = get_input_data()
 
