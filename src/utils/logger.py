@@ -1,7 +1,13 @@
 from logging import getLogger
+from src.patterns.observer import Observer
 
 # Initialize the logger
 logger = getLogger(__name__)
+
+class Logger(Observer):
+    def update(self, email, classification):
+        # Delegate logging to a helper function
+        log_classification(email, classification)
 
 def log_classification(email, classification):
 
