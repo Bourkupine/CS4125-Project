@@ -24,7 +24,7 @@ def preprocess_data(df):
 
 if __name__ == '__main__':
 
-    models = []
+    models = Config.MODELS
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-m", "--model",
@@ -44,6 +44,12 @@ if __name__ == '__main__':
 
     if args.model not in models:
         sys.exit("Invalid model, use --list for a list of available models")
+
+    if not args.model:
+        current_model = Config.DEFAULT_MODEL
+    else:
+        current_model = args.model
+
 
     df = get_input_data()
 
