@@ -67,4 +67,4 @@ def get_input_data() -> DataFrame:
 
 def translate_input_data(df: DataFrame):
     df[Config.TICKET_SUMMARY] = pd.Series(trans_to_en(df[Config.TICKET_SUMMARY].to_list()), index=df.index)
-    # df[Config.INTERACTION_CONTENT] = pd.Series(trans_to_en(df[Config.INTERACTION_CONTENT].to_list()), index=df.index)
+    df[Config.INTERACTION_CONTENT] = pd.Series(trans_to_en(df[Config.INTERACTION_CONTENT].to_list()), index=df.index)
