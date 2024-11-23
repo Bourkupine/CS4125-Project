@@ -1,5 +1,5 @@
 from typing import List
-from observer import Observer
+from src.patterns.observer import Observer
 
 class ClassificationNotifier:
 
