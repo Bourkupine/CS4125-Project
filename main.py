@@ -1,10 +1,9 @@
 import random
 
 import numpy as np
-import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from modelling.data_model import Data
+from src.modelling.data_model import Data
 from src.config.config import Config
 from src.data.embeddings import get_tfidf_embd
 from src.data.preprocessing import de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data

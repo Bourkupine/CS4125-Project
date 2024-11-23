@@ -2,7 +2,7 @@ import random
 
 import numpy as np
 
-class Data():
+class Data:
 
     def __init__(self, X_train: np.ndarray, X_test: np.ndarray, Y_train: np.ndarray, Y_test: np.ndarray) -> None:
         self.Y_test = Y_test
