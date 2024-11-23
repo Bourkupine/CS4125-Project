@@ -7,5 +7,5 @@ class DuplicateDecorator(PreProcessing):
         #removing duplicates
         return df.drop_duplicates(keep='first')
 
-    def __init__(self):
+    def __init__(self,df: DataFrame)-> DataFrame:
         self.preprocess()

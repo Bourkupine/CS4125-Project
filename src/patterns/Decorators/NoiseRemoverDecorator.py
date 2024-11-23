@@ -60,6 +60,6 @@ class NoiseRemoverDecorator(PreProcessing):
 
         return df
 
-    def __init__(self):
+    def __init__(self, df: DataFrame)-> DataFrame:
         self.preprocess()
 

@@ -4,21 +4,27 @@ import sys
 
 import numpy as np
 from sklearn.model_selection import train_test_split
+from src.data.base_preprocessing import BasePreProcessing #for remove_empty vals
 
 from src.modelling.data_model import Data
 from src.config.config import Config
 from src.data.embeddings import get_tfidf_embd
-from src.data.preprocessing import de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
+from src.patterns.Decorators import DuplicateDecorator, NoiseRemoverDecorator, TranslateDecorator # these are adding the following functionality de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
+from src.utils.file_helpers import get_input_data #this is for getting the input data
 
 seed = 0
 random.seed(seed)
 np.random.seed(seed)
+BasePreProcessor = BasePreProcessing()
+DuplicateDecorator = DuplicateDecorator()
+TranslateDecorator = TranslateDecorator()
+NoiseRemoverDecorator = NoiseRemoverDecorator()
 
 def preprocess_data(df):
-    df = remove_empty(df)
-    df = de_duplication(df)
-    translate_input_data(df)
-    noise_remover(df)
+    df = BasePreProcessor.preprocess(df)
+    df = DuplicateDecorator.preprocess_data(df)
+    df = TranslateDecorator.preprocess(df)
+    df = NoiseRemoverDecorator.preprocess(df)
     return df
 
 if __name__ == '__main__':

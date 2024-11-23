@@ -13,5 +13,5 @@ class TranslateDecorator(PreProcessing):
                                                    index=df.index)
         return df
 
-    def __init__(self):
+    def __init__(self, df: DataFrame)-> DataFrame:
         self.preprocess()
