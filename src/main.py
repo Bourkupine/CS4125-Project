@@ -1,35 +1,40 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-
-from src.data.preprocessing import de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
+#from src.data.preprocessing import de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
 from src.config.config import Config
 from src.utils.translate import trans_to_en
 from src.data.embeddings import get_tfidf_embd
 from modelling.data_model import Data
 from patterns.observer import ClassificationNotifier, MetricsTracker, UIUpdater
 from utils.logger import log_classification
-
+from src.data.BasePreProcessing import BasePreProcessing
+from patterns.Decorators import DuplicateDecorator, NoiseRemoverDecorator, TranslateDecorator
 import random
 
 # Set random seed for reproducibility
 seed = 0
 random.seed(seed)
 np.random.seed(seed)
+#this is to initilise the basepreprocessing class so we can use it here.
+BasePreProcessor = BasePreProcessing()
+DuplicateDecorator = DuplicateDecorator()
+TranslateDecorator = TranslateDecorator()
+NoiseRemoverDecorator = NoiseRemoverDecorator()
 
 
 def load_data():
     # load the input data
-    df = get_input_data()
+    df = BasePreProcessor.get_input_data()
     return df
 
 
 def preprocess_data(df):
     #Preprocess the input data.
-    df = remove_empty(df)
-    df = de_duplication(df)
-    translate_input_data(df)
-    noise_remover(df)
+    df = BasePreProcessor.preprocess(df)
+    df = DuplicateDecorator.preprocess_data(df)
+    df = TranslateDecorator.preprocess(df)
+    df = NoiseRemoverDecorator.preprocess(df)
     return df
 
 
