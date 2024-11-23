@@ -30,6 +30,7 @@ def preprocess_data(df):
 if __name__ == '__main__':
 
     models = Config.MODELS
+    decorators_list = Config.DECORATORS
     parser = argparse.ArgumentParser()
 
     # Argument for passing model choice
@@ -49,11 +50,25 @@ if __name__ == '__main__':
                     required=False,
                     action='store_true',
                     help="Enter interactive mode to select a model")
+    
+    parser.add_argument("-d", "--decorator",
+                    nargs='*',
+                    required=False,
+                    help="Pass decorators in for preprocessing, use --dlist for available decorators")
+    
+    parser.add_argument("--dlist",
+                    required=False,
+                    action='store_true',
+                    help="List all available decorators")
 
     args = parser.parse_args()
 
     if args.list:
         print(f"Current Models: {models}")
+        exit()
+
+    if args.dlist:
+        print(f"Current Decorators: {decorators_list}")
         exit()
 
     # Code for interactively choosing model
@@ -67,6 +82,15 @@ if __name__ == '__main__':
             if resp in models:
                 break
             print("Invalid choice")
+
+    if args.decorator:
+        decorators = []
+        for dec in args.decorator:
+            if dec not in decorators_list:
+                sys.exit("Unknown decorator")
+            else:
+                decorators.append(dec)
+        print(decorators)
 
     if not args.model:
         # No model passed, so we use the default model from Config
