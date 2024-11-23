@@ -59,7 +59,3 @@ class NoiseRemoverDecorator(PreProcessing):
                 r'\\s+', ' ', regex=True).str.strip()
 
         return df
-
-    def __init__(self, df: DataFrame)-> DataFrame:
-        self.preprocess()
-

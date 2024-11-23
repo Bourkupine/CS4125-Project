@@ -22,7 +22,7 @@ NoiseRemoverDecorator = NoiseRemoverDecorator()
 
 def preprocess_data(df):
     df = BasePreProcessor.preprocess(df)
-    df = DuplicateDecorator.preprocess_data(df)
+    df = DuplicateDecorator.preprocess(df)
     df = TranslateDecorator.preprocess(df)
     df = NoiseRemoverDecorator.preprocess(df)
     return df

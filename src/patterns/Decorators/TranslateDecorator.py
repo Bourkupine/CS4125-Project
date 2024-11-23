@@ -12,6 +12,3 @@ class TranslateDecorator(PreProcessing):
         df[Config.INTERACTION_CONTENT] = pd.Series(trans_to_en(df[Config.INTERACTION_CONTENT].to_list()),
                                                    index=df.index)
         return df
-
-    def __init__(self, df: DataFrame)-> DataFrame:
-        self.preprocess()
