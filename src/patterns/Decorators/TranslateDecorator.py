@@ -6,7 +6,12 @@ from src.utils.translate import trans_to_en
 
 class TranslateDecorator(PreProcessing):
 
-    def preprocess(df: DataFrame):
+    def preprocess(self,df: DataFrame):
+        #translating using trans_to_en
         df[Config.TICKET_SUMMARY] = pd.Series(trans_to_en(df[Config.TICKET_SUMMARY].to_list()), index=df.index)
         df[Config.INTERACTION_CONTENT] = pd.Series(trans_to_en(df[Config.INTERACTION_CONTENT].to_list()),
                                                    index=df.index)
+        return df
+
+    def __init__(self):
+        self.preprocess()

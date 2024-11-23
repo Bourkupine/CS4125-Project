@@ -5,7 +5,8 @@ from src.data.preprocessing import PreProcessing
 
 class NoiseRemoverDecorator(PreProcessing):
 
-    def preprocess(df: DataFrame):
+    def preprocess(self,df: DataFrame):
+        #removing noise
         noise = "(sv\\s*:)|(wg\\s*:)|(ynt\\s*:)|(fw(d)?\\s*:)|(r\\s*:)|(re\\s*:)|(\\[|\\])|(aspiegel support issue submit)|(null)|(nan)|((bonus place my )?support.pt 自动回复:)"
         df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].str.lower().replace(noise, " ", regex=True).replace(
             r'\\s+', ' ', regex=True).str.strip()
@@ -56,3 +57,9 @@ class NoiseRemoverDecorator(PreProcessing):
             df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].str.lower().replace(noise, " ",
                                                                                                 regex=True).replace(
                 r'\\s+', ' ', regex=True).str.strip()
+
+        return df
+
+    def __init__(self):
+        self.preprocess()
+

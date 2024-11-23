@@ -1,16 +1,15 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-#from src.data.preprocessing import de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
 from src.config.config import Config
-from src.utils.translate import trans_to_en
 from src.data.embeddings import get_tfidf_embd
 from modelling.data_model import Data
 from patterns.observer import ClassificationNotifier, MetricsTracker, UIUpdater
 from utils.logger import log_classification
-from src.data.BasePreProcessing import BasePreProcessing
+from src.data.base_preprocessing import BasePreProcessing
 from patterns.Decorators import DuplicateDecorator, NoiseRemoverDecorator, TranslateDecorator
 import random
+from utils.file_helpers import get_input_data
 
 # Set random seed for reproducibility
 seed = 0
@@ -25,7 +24,7 @@ NoiseRemoverDecorator = NoiseRemoverDecorator()
 
 def load_data():
     # load the input data
-    df = BasePreProcessor.get_input_data()
+    df = get_input_data()
     return df
 
 
