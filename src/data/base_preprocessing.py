@@ -3,7 +3,7 @@ from src.config.config import Config
 from pandas import DataFrame
 
 
-class BasePreProcessing(PreProcessing):
+class BasePreprocessing(PreProcessing):
 
     def preprocess(self,df:DataFrame) -> DataFrame:
         #remove_empty
