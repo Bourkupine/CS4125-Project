@@ -27,28 +27,51 @@ if __name__ == '__main__':
     models = Config.MODELS
     parser = argparse.ArgumentParser()
 
+    # Argument for passing model choice
     parser.add_argument("-m", "--model",
                     type=str,
                     required=False,
                     help="Pick which model to use for classification, use --list for available models")
-    
+
+    # Argument for displaying a list of available models
     parser.add_argument("--list",
                     required=False,
                     action='store_true',
                     help="List all available models")
+
+    # Argument for entering interactive mode for choosing a model
+    parser.add_argument("-i", "--interactive",
+                    required=False,
+                    action='store_true',
+                    help="Enter interactive mode to select a model")
+
     args = parser.parse_args()
 
     if args.list:
         print(f"Current Models: {models}")
         exit()
 
-    if args.model not in models:
-        sys.exit("Invalid model, use --list for a list of available models")
+    # Code for interactively choosing model
+    if args.interactive:
+        print("Entered interactive mode:")
+        resp = ""
+        while True:
+            resp = input(f"Enter model: {models}\n")
+            if resp == 'quit':
+                sys.exit(1)
+            if resp in models:
+                break
+            print("Invalid choice")
 
     if not args.model:
+        # No model passed, so we use the default model from Config
         current_model = Config.DEFAULT_MODEL
     else:
-        current_model = args.model
+        # Check if chosen model is a valid model
+        if args.model in models:
+            current_model = args.model
+        else:
+            sys.exit("Invalid model, use --list for a list of available models")
 
 
     df = get_input_data()
