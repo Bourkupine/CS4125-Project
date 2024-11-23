@@ -9,3 +9,7 @@ class Config:
     TYPE_COLS = ['Type 1', 'Type 3', 'Type 4']
     CLASS_COL = 'Type 2'
     GROUPED = 'Type 1'
+
+    # Models
+    MODELS = ["random_forest"]
+    DEFAULT_MODEL = ["random_forest"]
