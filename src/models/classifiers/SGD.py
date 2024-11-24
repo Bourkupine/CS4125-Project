@@ -1,11 +1,11 @@
-from sklearn.base import BaseEstimator
-
-from src.models.BaseModel import BaseModel
 from sklearn.linear_model import SGDClassifier
 
-class SGD(BaseModel):
-    def __init__(self, name: str):
-        super().__init__(name)
+from src.models.classifiers.BaseModel import BaseModel
 
-    def create_model(self) -> BaseEstimator:
-        return SGDClassifier(loss='log_loss')
+
+class SGDModel(BaseModel):
+    def __init__(self, name: str, load_model: bool = False):
+        super().__init__(name, load_model)
+
+    def create_model(self):
+        self.model = self.load_model() if self.load else SGDClassifier(loss='log_loss')

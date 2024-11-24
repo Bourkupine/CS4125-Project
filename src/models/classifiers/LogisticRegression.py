@@ -1,12 +1,11 @@
-from sklearn.base import BaseEstimator
-
-from src.models.BaseModel import BaseModel
 from sklearn.linear_model import LogisticRegression
 
-class RandomForest(BaseModel):
-    def __init__(self, name: str):
-        super(RandomForest, self).__init__(name)
+from src.models.classifiers.BaseModel import BaseModel
 
-    def create_model(self) -> BaseEstimator:
-        return LogisticRegression(max_iter=1000)
 
+class LogisticRegressionModel(BaseModel):
+    def __init__(self, name: str, load_model: bool = False):
+        super().__init__(name, load_model)
+
+    def create_model(self):
+        self.model = self.load_model() if self.load else LogisticRegression(max_iter=1000)

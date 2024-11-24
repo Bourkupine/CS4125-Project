@@ -11,11 +11,11 @@ CLASS_COL = 'Type 2'
 GROUPED = 'Type 1'
 
 # Models
-MODELS = ["random_forest"]
-DEFAULT_MODEL = ["random_forest"]
+MODELS = ["ada_boost", "linear_svc", "logistic_regression", "naive_bayes", "random_forest", "sgd"]
+DEFAULT_MODEL = "random_forest"
 
 #Data
 DATA_PATH = 'datasets/AppGallery.csv'
 
 #Decorators
-DECORATORS = ["Duplicate", "NoiseRemover", "Translate"]
+DECORATORS = ["RemoveDuplicates", "NoiseRemover", "Translate"]

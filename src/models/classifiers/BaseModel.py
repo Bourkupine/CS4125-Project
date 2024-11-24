@@ -1,23 +1,22 @@
 from abc import ABC, abstractmethod
 
-from numpy import ndarray
+import numpy as np
 from joblib import dump, load
+from numpy import ndarray
+from sklearn.base import BaseEstimator
 
 from src.modelling.data_model import Data
-from sklearn.base import BaseEstimator, ClassifierMixin
-
-import numpy as np
 
 
 class BaseModel(ABC):
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, load_model: bool):
         self.name = name
         self.path = f"./trained_models/{self.name}"
-        model = load(self.path)
-        self.model = model if model else self.create_model()
+        self.load: bool = load_model
+        self.model: BaseEstimator | None = None
 
     @abstractmethod
-    def create_model(self) -> BaseEstimator:
+    def create_model(self):
         ...
 
     def train(self, data: Data, save: bool = False) -> None:
@@ -46,6 +45,5 @@ class BaseModel(ABC):
             return load(self.path)
         except FileNotFoundError:
             # Move to logger in future
-            print(
-                f"No existing Model found for {self.name} at {self.path}, creating new model. Make sure to train it before evaluation.")
+            print(f"No existing Model found for {self.name} at {self.path}, creating new model. Make sure to train it before evaluation.")
             return None
