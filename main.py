@@ -3,6 +3,7 @@ import random
 import sys
 
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from src.modelling.data_model import Data
@@ -19,7 +20,10 @@ from src.preprocessing.Decorators.DuplicateDecorator import DuplicateDecorator
 from src.preprocessing.Decorators.NoiseRemoverDecorator import NoiseRemoverDecorator
 from src.preprocessing.Decorators.TranslateDecorator import TranslateDecorator
 from src.preprocessing.embeddings import get_tfidf_embd
+from src.utils.classification_notifier import ClassificationNotifier
 from src.utils.file_helpers import get_input_data
+from src.utils.logger import Logger
+from src.utils.metrics import MetricsTracker
 
 seed = 0
 random.seed(seed)
@@ -28,6 +32,11 @@ np.random.seed(seed)
 if __name__ == '__main__':
 
     config_manager = ConfigManager()
+
+    #Initialize notifier and attach observers
+    notifier = ClassificationNotifier()
+    notifier.attach(MetricsTracker())
+    notifier.attach(Logger())
 
     models = config_manager.get_config("MODELS")
     decorator_list = config_manager.get_config("DECORATORS")
@@ -134,4 +143,14 @@ if __name__ == '__main__':
     Y = df["Type 2"].to_numpy()
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     data = Data(X_train, X_test, Y_train, Y_test)
+
+    model.train(data, save=True)
+    test_data = pd.read_csv(("./datasets/test_data/email_test_data.csv"))
+    test_data = np.concatenate((np.asarray(test_data["Ticket Summary"]), np.asarray(test_data["Interaction Content"])),
+                               axis=1)
+    for data in test_data:
+        model.predict(np.asarray([data]))
+        email = "email"
+        classification = "classification"
+        notifier.notify(email, classification)
 
