@@ -4,26 +4,22 @@ import sys
 
 import numpy as np
 from sklearn.model_selection import train_test_split
+from src.data.BasePreprocessor import BasePreprocessor #for remove_empty vals
 
 from src.modelling.data_model import Data
 from src.config.config import Config
 from src.data.embeddings import get_tfidf_embd
-from src.data.preprocessing import de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
+from src.patterns.Decorators import DuplicateDecorator, NoiseRemoverDecorator, TranslateDecorator # these are adding the following functionality de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
+from src.utils.file_helpers import get_input_data #this is for getting the input data
 
 seed = 0
 random.seed(seed)
 np.random.seed(seed)
 
-def preprocess_data(df):
-    df = remove_empty(df)
-    df = de_duplication(df)
-    translate_input_data(df)
-    noise_remover(df)
-    return df
-
 if __name__ == '__main__':
 
     models = Config.MODELS
+    decorators_list = Config.DECORATORS
     parser = argparse.ArgumentParser()
 
     # Argument for passing model choice
@@ -43,11 +39,25 @@ if __name__ == '__main__':
                     required=False,
                     action='store_true',
                     help="Enter interactive mode to select a model")
+    
+    parser.add_argument("-d", "--decorator",
+                    nargs='*',
+                    required=False,
+                    help="Pass decorators in for preprocessing, use --dlist for available decorators")
+    
+    parser.add_argument("--dlist",
+                    required=False,
+                    action='store_true',
+                    help="List all available decorators")
 
     args = parser.parse_args()
 
     if args.list:
         print(f"Current Models: {models}")
+        exit()
+
+    if args.dlist:
+        print(f"Current Decorators: {decorators_list}")
         exit()
 
     # Code for interactively choosing model
@@ -61,6 +71,15 @@ if __name__ == '__main__':
             if resp in models:
                 break
             print("Invalid choice")
+
+    if args.decorator:
+        decorators = []
+        for dec in args.decorator:
+            if dec not in decorators_list:
+                sys.exit("Unknown decorator")
+            else:
+                decorators.append(dec)
+        print(decorators)
 
     if not args.model:
         # No model passed, so we use the default model from Config
@@ -77,8 +96,6 @@ if __name__ == '__main__':
 
     df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].values.astype('U')
     df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].values.astype('U')
-
-    df = preprocess_data(df)
 
     X = get_tfidf_embd(df)
     Y = df["Type 2"].to_numpy()

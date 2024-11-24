@@ -13,3 +13,6 @@ class Config:
     # Models
     MODELS = ["random_forest"]
     DEFAULT_MODEL = ["random_forest"]
+
+    # Decorators
+    DECORATORS = ["Duplicate", "NoiseRemover", "Translate"]
