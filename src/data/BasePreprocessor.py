@@ -1,9 +1,9 @@
-from preprocessing import PreProcessing
+from src.data.Preprocessor import Preprocessor
 from src.config.config import Config
 from pandas import DataFrame
 
 
-class BasePreprocessing(PreProcessing):
+class BasePreprocessor(Preprocessor):
 
     def preprocess(self,df:DataFrame) -> DataFrame:
         #remove_empty

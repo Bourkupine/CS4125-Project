@@ -1,11 +1,15 @@
 from pandas import DataFrame
 from src.config.config import Config
-from src.data.preprocessing import PreProcessing
+from src.data.Preprocessor import Preprocessor
 
 
-class NoiseRemoverDecorator(PreProcessing):
+class NoiseRemoverDecorator(Preprocessor):
+
+    def __init__(self, PreProcessing):
+        self.PreProcessing = PreProcessing
 
     def preprocess(self,df: DataFrame):
+        self.PreProcessing.preprocess()
         #removing noise
         noise = "(sv\\s*:)|(wg\\s*:)|(ynt\\s*:)|(fw(d)?\\s*:)|(r\\s*:)|(re\\s*:)|(\\[|\\])|(aspiegel support issue submit)|(null)|(nan)|((bonus place my )?support.pt 自动回复:)"
         df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].str.lower().replace(noise, " ", regex=True).replace(
