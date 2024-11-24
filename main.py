@@ -158,8 +158,8 @@ if __name__ == '__main__':
     model.train(data, save=True)
 
     results = model.predict(X_test)
+    
     for idx, result in enumerate(results):
-        print(f"Predicted: {result} | Actual: {Y_test[idx]}")
         emailid = idx
         classification = result
         notifier.notify(emailid, classification)
