@@ -8,4 +8,8 @@ class NaiveBayesModel(BaseModel):
         super().__init__(name, load_model)
 
     def create_model(self):
-        self.model = self.load_model() if self.load else MultinomialNB()
+        if self.load:
+            model = self.load_model()
+        else:
+            model = MultinomialNB()
+        return model if model else MultinomialNB()

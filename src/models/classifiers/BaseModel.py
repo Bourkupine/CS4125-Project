@@ -1,3 +1,4 @@
+import os.path
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -11,25 +12,25 @@ from src.modelling.data_model import Data
 class BaseModel(ABC):
     def __init__(self, name: str, load_model: bool):
         self.name = name
-        self.path = f"./trained_models/{self.name}"
+        self.path = f"./trained_models/{self.name}.joblib"
         self.load: bool = load_model
-        self.model: BaseEstimator | None = None
+        self.model: BaseEstimator | None = self.create_model()
 
     @abstractmethod
     def create_model(self):
         ...
 
     def train(self, data: Data, save: bool = False) -> None:
-        if not hasattr(self.model, 'fit') or not callable(getattr(self.model, 'fit')):
-            raise TypeError("The created model must have a callable `fit` method.")
+        # if not hasattr(self.model, 'fit') or not callable(getattr(self.model, 'fit')):
+        #     raise TypeError("The created model must have a callable `fit` method.")
 
         self.model.fit(data.get_X_train(), data.get_Y_train())
         if save:
             self.save_model()
 
     def predict(self, data: np.ndarray) -> ndarray:
-        if not hasattr(self.model, 'predict') or not callable(getattr(self.model, 'predict')):
-            raise TypeError("The created model must have a callable `predict` method.")
+        # if not hasattr(self.model, 'predict') or not callable(getattr(self.model, 'predict')):
+        #     raise TypeError("The created model must have a callable `predict` method.")
 
         return self.model.predict(data)
 

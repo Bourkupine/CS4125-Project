@@ -5,5 +5,5 @@ from src.models.strategies.naivebayes_strategy import NaiveBayesStrategy
 
 class NaiveBayesFactory(ModelFactory):
     def create_model(self, model_name: str, load_saved: bool) -> NaiveBayesStrategy:
-        model =  NaiveBayesModel(model_name, load_saved).create_model()
+        model =  NaiveBayesModel(model_name, load_saved)
         return NaiveBayesStrategy(model)

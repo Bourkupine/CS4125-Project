@@ -8,4 +8,9 @@ class AdaBoostModel(BaseModel):
         super().__init__(name, load_model)
 
     def create_model(self):
-        self.model = self.load_model() if self.load else AdaBoostClassifier(n_estimators=1000)
+        if self.load:
+            model = self.load_model()
+        else:
+            model = AdaBoostClassifier(n_estimators=1000)
+
+        return model if model else AdaBoostClassifier(n_estimators=1000)
