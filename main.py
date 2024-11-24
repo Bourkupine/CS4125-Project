@@ -7,9 +7,9 @@ from sklearn.model_selection import train_test_split
 from src.data.BasePreprocessor import BasePreprocessor #for remove_empty vals
 
 from src.modelling.data_model import Data
-from src.config.config import Config
 from src.data.embeddings import get_tfidf_embd
 from src.patterns.Decorators import DuplicateDecorator, NoiseRemoverDecorator, TranslateDecorator # these are adding the following functionality de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
+from src.patterns.config_manager import ConfigManager
 from src.utils.file_helpers import get_input_data #this is for getting the input data
 
 seed = 0
@@ -18,8 +18,11 @@ np.random.seed(seed)
 
 if __name__ == '__main__':
 
-    models = Config.MODELS
-    decorators_list = Config.DECORATORS
+    config_manager = ConfigManager
+
+    models = config_manager.get_config("MODELS")
+    decorator_list = config_manager.get_config("DECORATORS")
+
     parser = argparse.ArgumentParser()
 
     # Argument for passing model choice
@@ -57,7 +60,7 @@ if __name__ == '__main__':
         exit()
 
     if args.dlist:
-        print(f"Current Decorators: {decorators_list}")
+        print(f"Current Decorators: {decorator_list}")
         exit()
 
     # Code for interactively choosing model
@@ -72,10 +75,10 @@ if __name__ == '__main__':
                 break
             print("Invalid choice")
 
+    decorators = []
     if args.decorator:
-        decorators = []
         for dec in args.decorator:
-            if dec not in decorators_list:
+            if dec not in decorator_list:
                 sys.exit("Unknown decorator")
             else:
                 decorators.append(dec)
@@ -83,7 +86,7 @@ if __name__ == '__main__':
 
     if not args.model:
         # No model passed, so we use the default model from Config
-        current_model = Config.DEFAULT_MODEL
+        current_model = config_manager.get_config("DEFAULT_MODEL")
     else:
         # Check if chosen model is a valid model
         if args.model in models:
@@ -94,8 +97,11 @@ if __name__ == '__main__':
 
     df = get_input_data()
 
-    df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].values.astype('U')
-    df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].values.astype('U')
+    interaction_content = config_manager.get_config("INTERACTION_CONTENT")
+    ticket_summary = config_manager.get_config("TICKET_SUMMARY")
+
+    df[interaction_content] = df[interaction_content].values.astype('U')
+    df[ticket_summary] = df[ticket_summary].values.astype('U')
 
     X = get_tfidf_embd(df)
     Y = df["Type 2"].to_numpy()
