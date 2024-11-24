@@ -143,7 +143,9 @@ if __name__ == '__main__':
     Y = df["Type 2"].to_numpy()
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     data = Data(X_train, X_test, Y_train, Y_test)
-
+    '''
+    placeholder logic for implementing observer pattern
+    
     model.train(data, save=True)
     test_data = pd.read_csv(("./datasets/test_data/email_test_data.csv"))
     test_data = np.concatenate((np.asarray(test_data["Ticket Summary"]), np.asarray(test_data["Interaction Content"])),
@@ -153,4 +155,5 @@ if __name__ == '__main__':
         email = "email"
         classification = "classification"
         notifier.notify(email, classification)
+    '''
 
