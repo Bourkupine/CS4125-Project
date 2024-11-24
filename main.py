@@ -1,6 +1,7 @@
 import argparse
 import random
 import sys
+import logging
 
 import numpy as np
 import pandas as pd
@@ -37,6 +38,15 @@ if __name__ == '__main__':
     notifier = ClassificationNotifier()
     notifier.attach(MetricsTracker())
     notifier.attach(Logger())
+
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,  # Set the log level (e.g., DEBUG, INFO, WARNING)
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.StreamHandler()  # Send logs to the terminal
+        ]
+    )
 
     models = config_manager.get_config("MODELS")
     decorator_list = config_manager.get_config("DECORATORS")
@@ -162,3 +172,6 @@ if __name__ == '__main__':
     results = model.predict(X_test)
     for idx, result in enumerate(results):
         print(f"Predicted: {result} | Actual: {Y_test[idx]}")
+        emailid = idx
+        classification = result
+        notifier.notify(emailid, classification)
