@@ -1,24 +1,25 @@
 import stanza
 from stanza.pipeline.core import DownloadMethod
+from torch._C import device
 from transformers import pipeline
 from transformers import M2M100ForConditionalGeneration, M2M100Tokenizer
 
 
 def trans_to_en(texts: list):
     t2t_m = "facebook/m2m100_418M"
-    t2t_pipe = pipeline(task='text2text-generation', model=t2t_m)
+    t2t_pipe = pipeline(task='text2text-generation', model=t2t_m, device=0)
 
-    model = M2M100ForConditionalGeneration.from_pretrained(t2t_m)
+    model = M2M100ForConditionalGeneration.from_pretrained(t2t_m).to(0)
     tokenizer = M2M100Tokenizer.from_pretrained(t2t_m)
-    nlp_stanza = stanza.Pipeline(lang="multilingual", processors="langid",
-                                 download_method=DownloadMethod.REUSE_RESOURCES, use_gpu=True)
+    nlp_stanza = stanza.Pipeline(lang="multilingual", processors="langid", use_gpu=True, device=0,
+                                 download_method=DownloadMethod.REUSE_RESOURCES)
 
     text_en_l = []
     in_docs = [stanza.Document([], text = d) for d in texts]
     out_docs = nlp_stanza(in_docs)
     for doc in out_docs:
         doc_text = doc.text
-        print(doc.lang)
+        # print(doc.lang)
         if doc.lang == "en":
             text_en_l = text_en_l + [doc_text]
         else:
@@ -41,7 +42,7 @@ def trans_to_en(texts: list):
                 text_en = text_en[0]['generated_text']
             elif case == 2:
                 tokenizer.src_lang = lang
-                encoded_hi = tokenizer(doc_text, return_tensors="pt")
+                encoded_hi = tokenizer(doc_text, return_tensors="pt").to(0)
                 generated_tokens = model.generate(**encoded_hi, forced_bos_token_id=tokenizer.get_lang_id("en"))
                 text_en = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
                 text_en = text_en[0]
@@ -50,7 +51,7 @@ def trans_to_en(texts: list):
 
             text_en_l = text_en_l + [text_en]
 
-            print(doc_text)
-            print(text_en)
+            # print(doc_text)
+            # print(text_en)
 
     return text_en_l

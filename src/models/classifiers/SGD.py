@@ -8,4 +8,8 @@ class SGDModel(BaseModel):
         super().__init__(name, load_model)
 
     def create_model(self):
-        self.model = self.load_model() if self.load else SGDClassifier(loss='log_loss')
+        if self.load:
+            model = self.load_model()
+        else:
+            model = SGDClassifier(loss='log_loss')
+        return model if model else SGDClassifier(loss='log_loss')

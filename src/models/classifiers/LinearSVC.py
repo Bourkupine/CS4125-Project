@@ -8,4 +8,9 @@ class LinearSVCModel(BaseModel):
         super().__init__(name, load_model)
 
     def create_model(self):
-        self.model = self.load_model() if self.load else LinearSVC()
+        if self.load:
+            model = self.load_model()
+        else:
+            model = LinearSVC()
+
+        return model if model else LinearSVC()

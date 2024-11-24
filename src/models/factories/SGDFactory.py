@@ -5,5 +5,5 @@ from src.models.strategies.SGD_strategy import SGDStrategy
 
 class SGDFactory(ModelFactory):
     def create_model(self, model_name: str, load_saved: bool) -> SGDStrategy:
-        model = SGDModel(model_name, load_saved).create_model()
+        model = SGDModel(model_name, load_saved)
         return SGDStrategy(model)

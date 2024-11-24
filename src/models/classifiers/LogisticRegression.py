@@ -8,4 +8,9 @@ class LogisticRegressionModel(BaseModel):
         super().__init__(name, load_model)
 
     def create_model(self):
-        self.model = self.load_model() if self.load else LogisticRegression(max_iter=1000)
+        if self.load:
+            model = self.load_model()
+        else:
+            model = LogisticRegression(max_iter=1000)
+
+        return model if model else LogisticRegression(max_iter=1000)
