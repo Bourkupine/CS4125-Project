@@ -8,4 +8,8 @@ class RandomForestModel(BaseModel):
         super().__init__(name, load_model)
 
     def create_model(self):
-        self.model = self.load_model() if self.load else RandomForestClassifier(n_estimators=1000,class_weight='balanced_subsample')
+        if self.load:
+            model = self.load_model()
+        else:
+            model = RandomForestClassifier(n_estimators=100, class_weight='balanced_subsample')
+        return model if model else RandomForestClassifier(n_estimators=100, class_weight='balanced_subsample')

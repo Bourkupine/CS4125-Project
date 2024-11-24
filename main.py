@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     decorator_map = {
         "RemoveDuplicates": DuplicateDecorator,
-        "RemoveNoise": NoiseRemoverDecorator,
+        "NoiseRemover": NoiseRemoverDecorator,
         "Translate": TranslateDecorator,
     }
 
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                 sys.exit("Unknown decorator")
             else:
                 decorators.append(dec)
-    decorators = sorted(decorators, key={"Duplicate": 0, "Translate": 1, "NoiseRemover": 2}.get)
+    decorators = sorted(decorators, key={"RemoveDuplicates": 0, "Translate": 1, "NoiseRemover": 2}.get)
     for dec in decorators:
         preprocessor = decorator_map[dec](preprocessor)
 
@@ -133,7 +133,7 @@ if __name__ == '__main__':
             sys.exit("Invalid model, use --list for a list of available models")
 
     model_factory: ModelFactory = model_map[current_model]
-    model = model_factory.create_model(model_name="Model", load_saved=True)
+    model = model_factory.create_model(model_name=current_model, load_saved=True)
 
     df = get_input_data()
 
@@ -157,3 +157,8 @@ if __name__ == '__main__':
         notifier.notify(email, classification)
     '''
 
+    model.train(data, save=True)
+
+    results = model.predict(X_test)
+    for idx, result in enumerate(results):
+        print(f"Predicted: {result} | Actual: {Y_test[idx]}")

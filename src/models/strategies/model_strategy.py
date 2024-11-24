@@ -16,12 +16,12 @@ class ModelStrategy(ABC):
     This is an abstract method for training our model
     '''
     @abstractmethod
-    def train(self, data: Data):
+    def train(self, data: Data, save: bool):
         pass
 
     '''
     This is an abstract method for predicting using our model
     '''
     @abstractmethod
-    def predict(self, data: Data) -> np.ndarray:
+    def predict(self, data: np.ndarray) -> np.ndarray:
         pass

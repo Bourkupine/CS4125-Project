@@ -8,8 +8,8 @@ class NaiveBayesStrategy(ModelStrategy):
     def __init__(self, model: BaseModel):
         super().__init__(model)
 
-    def train(self, data: Data):
-        self.model.train(data)
+    def train(self, data: Data, save: bool):
+        self.model.train(data, save)
 
     def predict(self, data: np.ndarray) -> np.ndarray:
         return self.model.predict(data)

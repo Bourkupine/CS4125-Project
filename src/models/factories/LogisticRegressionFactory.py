@@ -5,5 +5,5 @@ from src.models.strategies.logisticregression_strategy import LogisticRegression
 
 class LogisticRegressionFactory(ModelFactory):
     def create_model(self, model_name: str, load_saved: bool) -> LogisticRegressionStrategy:
-        model =  LogisticRegressionModel(model_name, load_saved).create_model()
+        model =  LogisticRegressionModel(model_name, load_saved)
         return LogisticRegressionStrategy(model)
