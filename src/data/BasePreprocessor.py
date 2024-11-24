@@ -11,7 +11,7 @@ from pandas import DataFrame
 class BasePreprocessor(Preprocessor):
 
     def __init__(self):
-        self.config_manager = ConfigManager
+        self.config_manager = ConfigManager()
 
     def preprocess(self,df:DataFrame) -> DataFrame:
         ticket_summary = self.config_manager.get_config("TICKET_SUMMARY")

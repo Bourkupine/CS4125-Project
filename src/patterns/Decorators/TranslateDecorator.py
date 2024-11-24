@@ -8,7 +8,7 @@ class TranslateDecorator(Preprocessor):
 
     def __init__(self, PreProcessing):
         self.PreProcessing = PreProcessing
-        self.config_manager = ConfigManager
+        self.config_manager = ConfigManager()
 
     def preprocess(self,df: DataFrame):
         #translating using trans_to_en

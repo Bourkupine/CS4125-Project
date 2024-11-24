@@ -18,7 +18,7 @@ np.random.seed(seed)
 
 if __name__ == '__main__':
 
-    config_manager = ConfigManager
+    config_manager = ConfigManager()
 
     models = config_manager.get_config("MODELS")
     decorator_list = config_manager.get_config("DECORATORS")
