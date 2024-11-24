@@ -1,5 +1,5 @@
 from pandas import DataFrame
-from src.config.config import Config
+from src.patterns.config_manager import ConfigManager
 from src.data.Preprocessor import Preprocessor
 
 
@@ -7,12 +7,17 @@ class NoiseRemoverDecorator(Preprocessor):
 
     def __init__(self, PreProcessing):
         self.PreProcessing = PreProcessing
+        self.config_manager = ConfigManager()
 
     def preprocess(self,df: DataFrame):
         self.PreProcessing.preprocess()
+
+        ticket_summary = self.config_manager.get_config("TICKET_SUMMARY")
+        interation_content = self.config_manager.get_config("INTERACTION_CONTENT")
+
         #removing noise
         noise = "(sv\\s*:)|(wg\\s*:)|(ynt\\s*:)|(fw(d)?\\s*:)|(r\\s*:)|(re\\s*:)|(\\[|\\])|(aspiegel support issue submit)|(null)|(nan)|((bonus place my )?support.pt 自动回复:)"
-        df[Config.TICKET_SUMMARY] = df[Config.TICKET_SUMMARY].str.lower().replace(noise, " ", regex=True).replace(
+        df[ticket_summary] = df[ticket_summary].str.lower().replace(noise, " ", regex=True).replace(
             r'\\s+', ' ', regex=True).str.strip()
 
         noise_1 = [
@@ -58,7 +63,7 @@ class NoiseRemoverDecorator(Preprocessor):
             "(\\s|^).(\\s|$)"]
 
         for noise in noise_1:
-            df[Config.INTERACTION_CONTENT] = df[Config.INTERACTION_CONTENT].str.lower().replace(noise, " ",
+            df[interation_content] = df[interation_content].str.lower().replace(noise, " ",
                                                                                                 regex=True).replace(
                 r'\\s+', ' ', regex=True).str.strip()
 
