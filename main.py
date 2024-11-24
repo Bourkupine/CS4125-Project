@@ -1,8 +1,10 @@
 import argparse
 import random
 import sys
+import logging
 
 import numpy as np
+import pandas as pd
 from sklearn.model_selection import train_test_split
 
 from src.modelling.data_model import Data
@@ -19,7 +21,10 @@ from src.preprocessing.Decorators.DuplicateDecorator import DuplicateDecorator
 from src.preprocessing.Decorators.NoiseRemoverDecorator import NoiseRemoverDecorator
 from src.preprocessing.Decorators.TranslateDecorator import TranslateDecorator
 from src.preprocessing.embeddings import get_tfidf_embd
+from src.utils.classification_notifier import ClassificationNotifier
 from src.utils.file_helpers import get_input_data
+from src.utils.logger import Logger
+from src.utils.metrics import MetricsTracker
 
 seed = 0
 random.seed(seed)
@@ -28,6 +33,20 @@ np.random.seed(seed)
 if __name__ == '__main__':
 
     config_manager = ConfigManager()
+
+    #Initialize notifier and attach observers
+    notifier = ClassificationNotifier()
+    notifier.attach(MetricsTracker())
+    notifier.attach(Logger())
+
+    # Configure logging
+    logging.basicConfig(
+        level=logging.INFO,  # Set the log level (e.g., DEBUG, INFO, WARNING)
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.StreamHandler()  # Send logs to the terminal
+        ]
+    )
 
     models = config_manager.get_config("MODELS")
     decorator_list = config_manager.get_config("DECORATORS")
@@ -135,8 +154,12 @@ if __name__ == '__main__':
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     data = Data(X_train, X_test, Y_train, Y_test)
 
+
     model.train(data, save=True)
 
     results = model.predict(X_test)
+    
     for idx, result in enumerate(results):
-        print(f"Predicted: {result} | Actual: {Y_test[idx]}")
+        emailid = idx
+        classification = result
+        notifier.notify(emailid, classification)

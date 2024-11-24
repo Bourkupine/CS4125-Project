@@ -13,7 +13,7 @@ def log_classification(email, classification):
 
     #Log the classification of an email.
 
-    logger.info(f"Email: '{email}' classified as {classification}")
+    logger.info(f"Email ticket id: '{email}' classified as {classification}")
 
 def log_metrics_update(stats):
 
