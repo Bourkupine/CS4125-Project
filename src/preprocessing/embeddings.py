@@ -8,7 +8,7 @@ import os
 # Needed so we can view the config manager
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from patterns.config_manager import ConfigManager
+from src.patterns.config_manager import ConfigManager
 
 def get_tfidf_embd(df: DataFrame):
 

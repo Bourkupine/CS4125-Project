@@ -1,16 +1,25 @@
-import random
 import argparse
+import random
 import sys
 
 import numpy as np
 from sklearn.model_selection import train_test_split
-from src.data.BasePreprocessor import BasePreprocessor #for remove_empty vals
 
 from src.modelling.data_model import Data
-from src.data.embeddings import get_tfidf_embd
-from src.patterns.Decorators import DuplicateDecorator, NoiseRemoverDecorator, TranslateDecorator # these are adding the following functionality de_duplication, noise_remover, get_input_data, remove_empty, translate_input_data
+from src.models.factories.AdaBoostFactory import AdaBoostFactory
+from src.models.factories.LinearSVCFactory import LinearSVCFactory
+from src.models.factories.LogisticRegressionFactory import LogisticRegressionFactory
+from src.models.factories.ModelFactory import ModelFactory
+from src.models.factories.NaiveBayesFactory import NaiveBayesFactory
+from src.models.factories.RandomForestFactory import RandomForestFactory
+from src.models.factories.SGDFactory import SGDFactory
 from src.patterns.config_manager import ConfigManager
-from src.utils.file_helpers import get_input_data #this is for getting the input data
+from src.preprocessing.BasePreprocessor import BasePreprocessor
+from src.preprocessing.Decorators.DuplicateDecorator import DuplicateDecorator
+from src.preprocessing.Decorators.NoiseRemoverDecorator import NoiseRemoverDecorator
+from src.preprocessing.Decorators.TranslateDecorator import TranslateDecorator
+from src.preprocessing.embeddings import get_tfidf_embd
+from src.utils.file_helpers import get_input_data
 
 seed = 0
 random.seed(seed)
@@ -23,35 +32,53 @@ if __name__ == '__main__':
     models = config_manager.get_config("MODELS")
     decorator_list = config_manager.get_config("DECORATORS")
 
+    model_map = {
+        "ada_boost": AdaBoostFactory(),
+        "linear_svc": LinearSVCFactory(),
+        "logistic_regression": LogisticRegressionFactory(),
+        "naive_bayes": NaiveBayesFactory(),
+        "random_forest": RandomForestFactory(),
+        "sgd": SGDFactory(),
+    }
+
+    decorator_map = {
+        "RemoveDuplicates": DuplicateDecorator,
+        "RemoveNoise": NoiseRemoverDecorator,
+        "Translate": TranslateDecorator,
+    }
+
+    preprocessor = BasePreprocessor()
+    model = None
+
     parser = argparse.ArgumentParser()
 
     # Argument for passing model choice
     parser.add_argument("-m", "--model",
-                    type=str,
-                    required=False,
-                    help="Pick which model to use for classification, use --list for available models")
+                        type=str,
+                        required=False,
+                        help="Pick which model to use for classification, use --list for available models")
 
     # Argument for displaying a list of available models
     parser.add_argument("--list",
-                    required=False,
-                    action='store_true',
-                    help="List all available models")
+                        required=False,
+                        action='store_true',
+                        help="List all available models")
 
     # Argument for entering interactive mode for choosing a model
     parser.add_argument("-i", "--interactive",
-                    required=False,
-                    action='store_true',
-                    help="Enter interactive mode to select a model")
-    
+                        required=False,
+                        action='store_true',
+                        help="Enter interactive mode to select a model")
+
     parser.add_argument("-d", "--decorator",
-                    nargs='*',
-                    required=False,
-                    help="Pass decorators in for preprocessing, use --dlist for available decorators")
-    
+                        nargs='*',
+                        required=False,
+                        help="Pass decorators in for preprocessing, use --dlist for available decorators")
+
     parser.add_argument("--dlist",
-                    required=False,
-                    action='store_true',
-                    help="List all available decorators")
+                        required=False,
+                        action='store_true',
+                        help="List all available decorators")
 
     args = parser.parse_args()
 
@@ -82,7 +109,9 @@ if __name__ == '__main__':
                 sys.exit("Unknown decorator")
             else:
                 decorators.append(dec)
-        print(decorators)
+    decorators = sorted(decorators, key={"Duplicate": 0, "Translate": 1, "NoiseRemover": 2}.get)
+    for dec in decorators:
+        preprocessor = decorator_map[dec](preprocessor)
 
     if not args.model:
         # No model passed, so we use the default model from Config
@@ -94,18 +123,15 @@ if __name__ == '__main__':
         else:
             sys.exit("Invalid model, use --list for a list of available models")
 
+    model_factory: ModelFactory = model_map[current_model]
+    model = model_factory.create_model(model_name="Model", load_saved=True)
 
     df = get_input_data()
 
-    interaction_content = config_manager.get_config("INTERACTION_CONTENT")
-    ticket_summary = config_manager.get_config("TICKET_SUMMARY")
-
-    df[interaction_content] = df[interaction_content].values.astype('U')
-    df[ticket_summary] = df[ticket_summary].values.astype('U')
+    df = preprocessor.preprocess(df)
 
     X = get_tfidf_embd(df)
     Y = df["Type 2"].to_numpy()
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
     data = Data(X_train, X_test, Y_train, Y_test)
 
-    "Todo: Create model and run with data"
